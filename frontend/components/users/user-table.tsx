@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { User } from '@/lib/types/user'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -22,12 +24,12 @@ import { MoreHorizontal, Eye, Pencil, Trash2 } from 'lucide-react'
 
 interface UserTableProps {
   users: User[]
-  onView: (user: User) => void
-  onEdit: (user: User) => void
   onDelete: (user: User) => void
 }
 
-export function UserTable({ users, onView, onEdit, onDelete }: UserTableProps) {
+export function UserTable({ users, onDelete }: UserTableProps) {
+  const router = useRouter()
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -53,7 +55,7 @@ export function UserTable({ users, onView, onEdit, onDelete }: UserTableProps) {
           <TableRow
             key={user.id}
             className="cursor-pointer border-border"
-            onClick={() => onView(user)}
+            onClick={() => router.push(`/users/${user.id}`)}
           >
             <TableCell>
               <div className="flex items-center gap-3">
@@ -90,23 +92,17 @@ export function UserTable({ users, onView, onEdit, onDelete }: UserTableProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onView(user)
-                    }}
-                  >
-                    <Eye className="mr-2 h-4 w-4" />
-                    View details
+                  <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
+                    <Link href={`/users/${user.id}`}>
+                      <Eye className="mr-2 h-4 w-4" />
+                      View details
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onEdit(user)
-                    }}
-                  >
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit
+                  <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
+                    <Link href={`/users/${user.id}/edit`}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={(e) => {

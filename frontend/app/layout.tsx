@@ -34,7 +34,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <Providers>
           <Navbar />
-          <div>
+          <div className="mx-10">
             {children}
           </div>
           <Toaster position="top-right" richColors closeButton />

@@ -1,29 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { User, CreateUserDto } from '@/lib/types/user'
-import { useUsers, useCreateUser, useUpdateUser, useDeleteUser, useCities, useCompanies } from '@/hooks/use-users'
+import Link from 'next/link'
+import { User } from '@/lib/types/user'
+import { useUsers, useDeleteUser, useCities, useCompanies } from '@/hooks/use-users'
 import { UserTable } from '@/components/users/user-table'
-import { UserForm } from '@/components/users/user-form'
-import { UserDetail } from '@/components/users/user-detail'
 import { SearchFilters } from '@/components/users/search-filters'
 import { DeleteConfirmDialog } from '@/components/users/delete-confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Empty,
@@ -34,16 +19,10 @@ import {
 } from '@/components/ui/empty'
 import { Users, Plus, UserX, AlertCircle, RefreshCw } from 'lucide-react'
 
-type ModalMode = 'create' | 'edit' | 'view' | null
-
 export default function UsersPage() {
-
   const [searchQuery, setSearchQuery] = useState('')
   const [companyFilter, setCompanyFilter] = useState('')
   const [cityFilter, setCityFilter] = useState('')
-  
-  const [modalMode, setModalMode] = useState<ModalMode>(null)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
 
@@ -61,42 +40,11 @@ export default function UsersPage() {
   
   const { data: cities = [] } = useCities()
   const { data: companies = [] } = useCompanies()
-  const createUserMutation = useCreateUser()
-  const updateUserMutation = useUpdateUser()
   const deleteUserMutation = useDeleteUser()
-
-  const handleOpenCreate = () => {
-    setSelectedUser(null)
-    setModalMode('create')
-  }
-
-  const handleOpenEdit = (user: User) => {
-    setSelectedUser(user)
-    setModalMode('edit')
-  }
-
-  const handleOpenView = (user: User) => {
-    setSelectedUser(user)
-    setModalMode('view')
-  }
 
   const handleOpenDelete = (user: User) => {
     setUserToDelete(user)
     setDeleteDialogOpen(true)
-  }
-
-  const handleCloseModal = () => {
-    setModalMode(null)
-    setSelectedUser(null)
-  }
-
-  const handleSubmit = async (data: CreateUserDto) => {
-    if (modalMode === 'edit' && selectedUser) {
-      await updateUserMutation.mutateAsync({ id: selectedUser.id, data })
-    } else {
-      await createUserMutation.mutateAsync(data)
-    }
-    handleCloseModal()
   }
 
   const handleDelete = async () => {
@@ -105,10 +53,6 @@ export default function UsersPage() {
     await deleteUserMutation.mutateAsync(userToDelete.id)
     setDeleteDialogOpen(false)
     setUserToDelete(null)
-    
-    if (selectedUser?.id === userToDelete.id) {
-      handleCloseModal()
-    }
   }
 
   const handleClearFilters = () => {
@@ -117,16 +61,9 @@ export default function UsersPage() {
     setCityFilter('')
   }
 
-  const handleRetry = () => {
-    refetch()
-  }
-
-  const isSubmitting = createUserMutation.isPending || updateUserMutation.isPending
-
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
@@ -139,9 +76,11 @@ export default function UsersPage() {
               </p>
             </div>
           </div>
-          <Button onClick={handleOpenCreate} className="w-full sm:w-auto">
-            <Plus className="mr-2 h-4 w-4" />
-            New User
+          <Button asChild className="w-full sm:w-auto">
+            <Link href="/users/new">
+              <Plus className="mr-2 h-4 w-4" />
+              New User
+            </Link>
           </Button>
         </div>
 
@@ -167,7 +106,6 @@ export default function UsersPage() {
             />
           </CardHeader>
           <CardContent className="p-0">
-
             {isLoading && (
               <div className="p-6">
                 <div className="flex flex-col gap-4">
@@ -198,7 +136,7 @@ export default function UsersPage() {
                     {error instanceof Error ? error.message : 'Failed to load users'}
                   </EmptyDescription>
                 </EmptyHeader>
-                <Button onClick={handleRetry} variant="outline">
+                <Button onClick={() => refetch()} variant="outline">
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Retry
                 </Button>
@@ -216,9 +154,11 @@ export default function UsersPage() {
                     Get started by adding your first user to the system.
                   </EmptyDescription>
                 </EmptyHeader>
-                <Button onClick={handleOpenCreate}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create first user
+                <Button asChild>
+                  <Link href="/users/new">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create first user
+                  </Link>
                 </Button>
               </Empty>
             )}
@@ -226,61 +166,12 @@ export default function UsersPage() {
             {!isLoading && !isError && users.length > 0 && (
               <UserTable
                 users={users}
-                onView={handleOpenView}
-                onEdit={handleOpenEdit}
                 onDelete={handleOpenDelete}
               />
             )}
           </CardContent>
         </Card>
       </div>
-
-      <Dialog
-        open={modalMode === 'create' || modalMode === 'edit'}
-        onOpenChange={(open) => !open && handleCloseModal()}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {modalMode === 'create' ? 'New User' : 'Edit User'}
-            </DialogTitle>
-            <DialogDescription>
-              {modalMode === 'create'
-                ? 'Fill out the form to add a new user.'
-                : 'Update the user information.'}
-            </DialogDescription>
-          </DialogHeader>
-          <UserForm
-            user={modalMode === 'edit' ? selectedUser : null}
-            onSubmit={handleSubmit}
-            onCancel={handleCloseModal}
-            isSubmitting={isSubmitting}
-          />
-        </DialogContent>
-      </Dialog>
-
-      <Sheet
-        open={modalMode === 'view'}
-        onOpenChange={(open) => !open && handleCloseModal()}
-      >
-        <SheetContent className="w-full sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>User Details</SheetTitle>
-            <SheetDescription>
-              Complete information for the selected user.
-            </SheetDescription>
-          </SheetHeader>
-          {selectedUser && (
-            <div className="mt-6">
-              <UserDetail
-                user={selectedUser}
-                onEdit={() => setModalMode('edit')}
-                onDelete={() => handleOpenDelete(selectedUser)}
-              />
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
 
       <DeleteConfirmDialog
         user={userToDelete}
