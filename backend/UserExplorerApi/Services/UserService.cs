@@ -17,32 +17,44 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync(string? search, string? city, string? company)
+    public async Task<PaginatedResponse<UserResponseDto>> GetAllUsersAsync(UserQueryParams queryParams)
     {
         var query = _context.Users.AsQueryable();
 
-        var searchTermLowered = search?.ToLower().Trim();
-        var cityLowered = city?.ToLower().Trim();
-        var companyLowered = company?.ToLower().Trim();
+        var searchTermLowered = queryParams.Search?.ToLower().Trim();
+        var cityLowered = queryParams.City?.ToLower().Trim();
+        var companyLowered = queryParams.Company?.ToLower().Trim();
 
-        if (!string.IsNullOrWhiteSpace(search))
+        if (!string.IsNullOrWhiteSpace(queryParams.Search))
         {
-            query = query.Where(u => u.Name.ToLower().Trim().Contains(searchTermLowered) || u.Email.ToLower().Trim().Contains(searchTermLowered));
+            query = query.Where(u => u.Name.ToLower().Trim().Contains(searchTermLowered!) || u.Email.ToLower().Trim().Contains(searchTermLowered!));
         }
 
-        if (!string.IsNullOrWhiteSpace(city))
+        if (!string.IsNullOrWhiteSpace(queryParams.City))
         {
             query = query.Where(u => u.City.ToLower().Trim() == cityLowered);
         }
 
-        if (!string.IsNullOrWhiteSpace(company))
+        if (!string.IsNullOrWhiteSpace(queryParams.Company))
         {
             query = query.Where(u => u.Company.ToLower().Trim() == companyLowered);
         }
 
-        var users = await query.ToListAsync();
+        var totalCount = await query.CountAsync();
 
-        return _mapper.Map<IEnumerable<UserResponseDto>>(users);
+        var users = await query
+            .OrderBy(u => u.Id)
+            .Skip((queryParams.Page - 1) * queryParams.PageSize)
+            .Take(queryParams.PageSize)
+            .ToListAsync();
+
+        return new PaginatedResponse<UserResponseDto>
+        {
+            Data = _mapper.Map<IEnumerable<UserResponseDto>>(users),
+            Page = queryParams.Page,
+            PageSize = queryParams.PageSize,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<UserResponseDto?> GetUserByIdAsync(int id)

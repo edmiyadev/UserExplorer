@@ -16,13 +16,10 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetUsers(
-        [FromQuery] string? search,
-        [FromQuery] string? city,
-        [FromQuery] string? company)
+    public async Task<ActionResult<PaginatedResponse<UserResponseDto>>> GetUsers([FromQuery] UserQueryParams queryParams)
     {
-        var users = await _userService.GetAllUsersAsync(search, city, company);
-        return Ok(users);
+        var result = await _userService.GetAllUsersAsync(queryParams);
+        return Ok(result);
     }
 
 
