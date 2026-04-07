@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UserExplorerApi.Models;
 
-public class User
+public class User : IAuditableEntity
 {
     [Key]
     public int Id { get; set; }
@@ -24,4 +24,7 @@ public class User
 
     [MaxLength(100)]
     public string City { get; set; } = string.Empty;
+
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

@@ -19,4 +19,26 @@ public class AppDbContext : DbContext
             .HasIndex(u => u.Email)
             .IsUnique();
     }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries<IAuditableEntity>();
+        var utcNow = DateTime.UtcNow;
+
+        foreach (var entry in entries)
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedAt = utcNow;
+                entry.Entity.UpdatedAt = utcNow;
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = utcNow;
+                entry.Property(nameof(IAuditableEntity.CreatedAt)).IsModified = false;
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
 }

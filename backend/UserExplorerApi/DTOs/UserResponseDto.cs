@@ -8,4 +8,6 @@ public class UserResponseDto
     public string Phone { get; set; } = string.Empty;
     public string Company { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }
