@@ -1,6 +1,89 @@
 @UserExplorerApi_HostAddress = http://localhost:5059
 
-GET {{UserExplorerApi_HostAddress}}/weatherforecast/
+### 1. GET - Obtener todos los usuarios
+GET {{UserExplorerApi_HostAddress}}/api/users
+Accept: application/json
+
+###
+
+### 2. GET - Obtener usuario por ID (cambiar el ID según tu BD)
+GET {{UserExplorerApi_HostAddress}}/api/users/1
+Accept: application/json
+
+###
+
+### 3. GET - Buscar usuarios por nombre o email
+GET {{UserExplorerApi_HostAddress}}/api/users?search=john
+Accept: application/json
+
+###
+
+### 4. GET - Filtrar usuarios por ciudad
+GET {{UserExplorerApi_HostAddress}}/api/users?city=Madrid
+Accept: application/json
+
+###
+
+### 5. GET - Filtrar usuarios por empresa
+GET {{UserExplorerApi_HostAddress}}/api/users?company=Microsoft
+Accept: application/json
+
+###
+
+### 6. GET - Combinar búsqueda y filtros
+GET {{UserExplorerApi_HostAddress}}/api/users?search=john&city=Madrid
+Accept: application/json
+
+###
+
+### 7. POST - Crear un nuevo usuario
+POST {{UserExplorerApi_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "123456789",
+  "company": "Microsoft",
+  "city": "Madrid"
+}
+
+###
+
+### 8. POST - Crear usuario con campos mínimos (solo requeridos)
+POST {{UserExplorerApi_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Jane Smith",
+  "email": "jane.smith@example.com"
+}
+
+###
+
+### 9. POST - Crear usuario (probando validaciones - email inválido)
+POST {{UserExplorerApi_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "invalid-email"
+}
+
+###
+
+### 10. POST - Crear usuario (probando validaciones - sin nombre)
+POST {{UserExplorerApi_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "email": "test@example.com"
+}
+
+###
+
+### 11. GET - Probar usuario no encontrado
+GET {{UserExplorerApi_HostAddress}}/api/users/99999
 Accept: application/json
 
 ###
