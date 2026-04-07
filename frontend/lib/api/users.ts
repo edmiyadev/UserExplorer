@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { User, CreateUserDto, UserFilters } from '@/lib/types/user';
+import type { User, CreateUserDto, UserFilters, PaginatedResponse } from '@/lib/types/user';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5059';
 
@@ -11,15 +11,17 @@ const apiClient = axios.create({
 });
 
 export const userApi = {
-  // Get all users with optional filters
-  getUsers: async (filters?: UserFilters): Promise<User[]> => {
+  // Get all users with optional filters and pagination
+  getUsers: async (filters?: UserFilters): Promise<PaginatedResponse<User>> => {
     const params = new URLSearchParams();
     
     if (filters?.search) params.append('search', filters.search);
     if (filters?.city) params.append('city', filters.city);
     if (filters?.company) params.append('company', filters.company);
+    if (filters?.page) params.append('page', filters.page.toString());
+    if (filters?.pageSize) params.append('pageSize', filters.pageSize.toString());
     
-    const { data } = await apiClient.get<User[]>(`/api/users?${params.toString()}`);
+    const { data } = await apiClient.get<PaginatedResponse<User>>(`/api/users?${params.toString()}`);
     return data;
   },
 
@@ -46,17 +48,17 @@ export const userApi = {
     await apiClient.delete(`/api/users/${id}`);
   },
 
-  // Get unique cities for filter
+  // Get unique cities for filter (fetch all users to extract cities)
   getUniqueCities: async (): Promise<string[]> => {
-    const { data } = await apiClient.get<User[]>('/api/users');
-    const cities = [...new Set(data.map(user => user.city).filter(Boolean))];
+    const { data } = await apiClient.get<PaginatedResponse<User>>('/api/users?pageSize=1000');
+    const cities = [...new Set(data.data.map(user => user.city).filter(Boolean))];
     return cities.sort();
   },
 
-  // Get unique companies for filter
+  // Get unique companies for filter (fetch all users to extract companies)
   getUniqueCompanies: async (): Promise<string[]> => {
-    const { data } = await apiClient.get<User[]>('/api/users');
-    const companies = [...new Set(data.map(user => user.company).filter(Boolean))];
+    const { data } = await apiClient.get<PaginatedResponse<User>>('/api/users?pageSize=1000');
+    const companies = [...new Set(data.data.map(user => user.company).filter(Boolean))];
     return companies.sort();
   },
 };

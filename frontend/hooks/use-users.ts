@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { userApi } from '@/lib/api/users';
-import type { CreateUserDto, UserFilters } from '@/lib/types/user';
+import type { CreateUserDto, UserFilters, PaginatedResponse, User } from '@/lib/types/user';
 import { toast } from 'sonner';
 
 
@@ -16,10 +16,11 @@ export const userKeys = {
 
 
 export function useUsers(filters?: UserFilters) {
-  return useQuery({
+  return useQuery<PaginatedResponse<User>>({
     queryKey: userKeys.list(filters),
     queryFn: () => userApi.getUsers(filters),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 }
 

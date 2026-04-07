@@ -7,6 +7,7 @@ import { useUsers, useDeleteUser, useCities, useCompanies } from '@/hooks/use-us
 import { UserTable } from '@/components/users/user-table'
 import { SearchFilters } from '@/components/users/search-filters'
 import { DeleteConfirmDialog } from '@/components/users/delete-confirm-dialog'
+import { Pagination } from '@/components/users/pagination'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -19,15 +20,19 @@ import {
 } from '@/components/ui/empty'
 import { Users, Plus, UserX, AlertCircle, RefreshCw } from 'lucide-react'
 
+const DEFAULT_PAGE_SIZE = 10
+
 export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [companyFilter, setCompanyFilter] = useState('')
   const [cityFilter, setCityFilter] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
 
   const { 
-    data: users = [], 
+    data, 
     isLoading, 
     isError, 
     error,
@@ -36,7 +41,12 @@ export default function UsersPage() {
     search: searchQuery || undefined,
     company: companyFilter && companyFilter !== 'all' ? companyFilter : undefined,
     city: cityFilter && cityFilter !== 'all' ? cityFilter : undefined,
+    page,
+    pageSize,
   })
+  
+  const users = data?.data ?? []
+  const totalCount = data?.totalCount ?? 0
   
   const { data: cities = [] } = useCities()
   const { data: companies = [] } = useCompanies()
@@ -59,6 +69,27 @@ export default function UsersPage() {
     setSearchQuery('')
     setCompanyFilter('')
     setCityFilter('')
+    setPage(1)
+  }
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value)
+    setPage(1)
+  }
+
+  const handleCompanyChange = (value: string) => {
+    setCompanyFilter(value)
+    setPage(1)
+  }
+
+  const handleCityChange = (value: string) => {
+    setCityFilter(value)
+    setPage(1)
+  }
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize)
+    setPage(1)
   }
 
   return (
@@ -90,7 +121,7 @@ export default function UsersPage() {
               <CardTitle className="text-base font-medium">
                 {isLoading
                   ? 'Loading...'
-                  : `${users.length} user${users.length !== 1 ? 's' : ''}`}
+                  : `${totalCount} user${totalCount !== 1 ? 's' : ''}`}
               </CardTitle>
             </div>
             <SearchFilters
@@ -99,9 +130,9 @@ export default function UsersPage() {
               cityFilter={cityFilter}
               companies={companies}
               cities={cities}
-              onSearchChange={setSearchQuery}
-              onCompanyChange={setCompanyFilter}
-              onCityChange={setCityFilter}
+              onSearchChange={handleSearchChange}
+              onCompanyChange={handleCompanyChange}
+              onCityChange={handleCityChange}
               onClearFilters={handleClearFilters}
             />
           </CardHeader>
@@ -164,10 +195,22 @@ export default function UsersPage() {
             )}
 
             {!isLoading && !isError && users.length > 0 && (
-              <UserTable
-                users={users}
-                onDelete={handleOpenDelete}
-              />
+              <>
+                <UserTable
+                  users={users}
+                  onDelete={handleOpenDelete}
+                />
+                <Pagination
+                  page={data?.page ?? 1}
+                  pageSize={data?.pageSize ?? pageSize}
+                  totalCount={data?.totalCount ?? 0}
+                  totalPages={data?.totalPages ?? 1}
+                  hasNextPage={data?.hasNextPage ?? false}
+                  hasPreviousPage={data?.hasPreviousPage ?? false}
+                  onPageChange={setPage}
+                  onPageSizeChange={handlePageSizeChange}
+                />
+              </>
             )}
           </CardContent>
         </Card>
