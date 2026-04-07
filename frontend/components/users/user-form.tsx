@@ -40,7 +40,7 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
   
   const userFormSchema = z.object({
     name: z.string().min(1, t.validation.nameRequired),
-    email: z.string().min(1, t.validation.emailRequired).email(t.validation.emailInvalid),
+    email: z.email(t.validation.emailInvalid),
     phone: z.string().optional(),
     company: z.string().optional(),
     city: z.string().optional(),

@@ -48,7 +48,7 @@ export const en = {
     email: 'Email',
     emailPlaceholder: 'email@example.com',
     phone: 'Phone',
-    phonePlaceholder: '+1 555 000 0000',
+    phonePlaceholder: '809 000 0000',
     company: 'Company',
     companyPlaceholder: 'Company name',
     city: 'City',
