@@ -87,3 +87,62 @@ GET {{UserExplorerApi_HostAddress}}/api/users/99999
 Accept: application/json
 
 ###
+
+### 12. PUT - Actualizar un usuario existente
+PUT {{UserExplorerApi_HostAddress}}/api/users/1
+Content-Type: application/json
+
+{
+  "name": "John Doe Updated",
+  "email": "john.updated@example.com",
+  "phone": "987654321",
+  "company": "Google",
+  "city": "Barcelona"
+}
+
+###
+
+### 13. PUT - Actualizar usuario con campos mínimos
+PUT {{UserExplorerApi_HostAddress}}/api/users/1
+Content-Type: application/json
+
+{
+  "name": "John Minimal",
+  "email": "john.minimal@example.com"
+}
+
+###
+
+### 14. PUT - Actualizar usuario no existente
+PUT {{UserExplorerApi_HostAddress}}/api/users/99999
+Content-Type: application/json
+
+{
+  "name": "Ghost User",
+  "email": "ghost@example.com"
+}
+
+###
+
+### 15. PUT - Actualizar usuario con email inválido (validación)
+PUT {{UserExplorerApi_HostAddress}}/api/users/1
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "invalid-email"
+}
+
+###
+
+### 16. DELETE - Eliminar un usuario existente
+DELETE {{UserExplorerApi_HostAddress}}/api/users/1
+Accept: application/json
+
+###
+
+### 17. DELETE - Eliminar usuario no existente
+DELETE {{UserExplorerApi_HostAddress}}/api/users/99999
+Accept: application/json
+
+###

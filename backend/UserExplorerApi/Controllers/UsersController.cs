@@ -54,4 +54,36 @@ public class UsersController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<UserResponseDto>> UpdateUser(int id, [FromBody] UpdateUserDto updateUserDto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var user = await _userService.UpdateUserAsync(id, updateUserDto);
+
+            if (user == null)
+                return NotFound(new { message = $"User with id {id} not found" });
+
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        var deleted = await _userService.DeleteUserAsync(id);
+
+        if (!deleted)
+            return NotFound(new { message = $"User with id {id} not found" });
+
+        return NoContent();
+    }
 }

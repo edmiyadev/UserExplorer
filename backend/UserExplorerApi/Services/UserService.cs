@@ -21,19 +21,23 @@ public class UserService : IUserService
     {
         var query = _context.Users.AsQueryable();
 
+        var searchTermLowered = search?.ToLower().Trim();
+        var cityLowered = city?.ToLower().Trim();
+        var companyLowered = company?.ToLower().Trim();
+
         if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(u => u.Name.Contains(search) || u.Email.Contains(search));
+            query = query.Where(u => u.Name.ToLower().Trim().Contains(searchTermLowered) || u.Email.ToLower().Trim().Contains(searchTermLowered));
         }
 
         if (!string.IsNullOrWhiteSpace(city))
         {
-            query = query.Where(u => u.City == city);
+            query = query.Where(u => u.City.ToLower().Trim() == cityLowered);
         }
 
         if (!string.IsNullOrWhiteSpace(company))
         {
-            query = query.Where(u => u.Company == company);
+            query = query.Where(u => u.Company.ToLower().Trim() == companyLowered);
         }
 
         var users = await query.ToListAsync();
@@ -44,7 +48,7 @@ public class UserService : IUserService
     public async Task<UserResponseDto?> GetUserByIdAsync(int id)
     {
         var user = await _context.Users.FindAsync(id);
-        
+
         if (user == null)
             return null;
 
@@ -55,9 +59,35 @@ public class UserService : IUserService
     {
         var user = _mapper.Map<User>(createUserDto);
 
-        _context.Users.AddAsync(user);
+        await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
         return _mapper.Map<UserResponseDto>(user);
+    }
+
+    public async Task<UserResponseDto?> UpdateUserAsync(int id, UpdateUserDto updateUserDto)
+    {
+        var user = await _context.Users.FindAsync(id);
+
+        if (user == null)
+            return null;
+
+        _mapper.Map(updateUserDto, user);
+        await _context.SaveChangesAsync();
+
+        return _mapper.Map<UserResponseDto>(user);
+    }
+
+    public async Task<bool> DeleteUserAsync(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+
+        if (user == null)
+            return false;
+
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }
