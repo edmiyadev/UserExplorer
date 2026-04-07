@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { User } from '@/lib/types/user'
+import { useTranslation } from '@/lib/i18n'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -28,6 +29,7 @@ interface UserTableProps {
 }
 
 export function UserTable({ users, onDelete }: UserTableProps) {
+  const { t } = useTranslation()
   const router = useRouter()
 
   const getInitials = (name: string) => {
@@ -43,10 +45,10 @@ export function UserTable({ users, onDelete }: UserTableProps) {
     <Table>
       <TableHeader>
         <TableRow className="hover:bg-transparent border-border">
-          <TableHead className="w-[300px]">User</TableHead>
-          <TableHead className="hidden md:table-cell">Phone</TableHead>
-          <TableHead className="hidden lg:table-cell">Company</TableHead>
-          <TableHead className="hidden sm:table-cell">City</TableHead>
+          <TableHead className="w-[300px]">{t.table.user}</TableHead>
+          <TableHead className="hidden md:table-cell">{t.table.phone}</TableHead>
+          <TableHead className="hidden lg:table-cell">{t.table.company}</TableHead>
+          <TableHead className="hidden sm:table-cell">{t.table.city}</TableHead>
           <TableHead className="w-[60px]"></TableHead>
         </TableRow>
       </TableHeader>
@@ -88,20 +90,20 @@ export function UserTable({ users, onDelete }: UserTableProps) {
                 <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
                     <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Open menu</span>
+                    <span className="sr-only">{t.table.openMenu}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
                     <Link href={`/users/${user.id}`}>
                       <Eye className="mr-2 h-4 w-4" />
-                      View details
+                      {t.users.viewDetails}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
                     <Link href={`/users/${user.id}/edit`}>
                       <Pencil className="mr-2 h-4 w-4" />
-                      Edit
+                      {t.common.edit}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
@@ -112,7 +114,7 @@ export function UserTable({ users, onDelete }: UserTableProps) {
                     className="text-destructive focus:text-destructive"
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
+                    {t.common.delete}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

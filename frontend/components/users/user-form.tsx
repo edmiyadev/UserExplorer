@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslation } from '@/lib/i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -18,8 +19,8 @@ import { Spinner } from '@/components/ui/spinner'
 import { User, CreateUserDto } from '@/lib/types/user'
 
 const userFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().min(1, 'Email is required').email('Invalid email format'),
+  name: z.string().min(1),
+  email: z.string().min(1).email(),
   phone: z.string().optional(),
   company: z.string().optional(),
   city: z.string().optional(),
@@ -35,6 +36,16 @@ interface UserFormProps {
 }
 
 export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: UserFormProps) {
+  const { t } = useTranslation()
+  
+  const userFormSchema = z.object({
+    name: z.string().min(1, t.validation.nameRequired),
+    email: z.string().min(1, t.validation.emailRequired).email(t.validation.emailInvalid),
+    phone: z.string().optional(),
+    company: z.string().optional(),
+    city: z.string().optional(),
+  })
+  
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -81,9 +92,9 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t.userForm.name}</FormLabel>
               <FormControl>
-                <Input placeholder="Full name" {...field} />
+                <Input placeholder={t.userForm.namePlaceholder} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,9 +106,9 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t.userForm.email}</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="email@example.com" {...field} />
+                <Input type="email" placeholder={t.userForm.emailPlaceholder} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -109,9 +120,9 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone</FormLabel>
+              <FormLabel>{t.userForm.phone}</FormLabel>
               <FormControl>
-                <Input placeholder="+1 555 000 0000" {...field} />
+                <Input placeholder={t.userForm.phonePlaceholder} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -123,9 +134,9 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
           name="company"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Company</FormLabel>
+              <FormLabel>{t.userForm.company}</FormLabel>
               <FormControl>
-                <Input placeholder="Company name" {...field} />
+                <Input placeholder={t.userForm.companyPlaceholder} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -135,11 +146,11 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
         <FormField
           control={form.control}
           name="city"
-          render={({ field }) => (
+          render={({ field}) => (
             <FormItem>
-              <FormLabel>City</FormLabel>
+              <FormLabel>{t.userForm.city}</FormLabel>
               <FormControl>
-                <Input placeholder="City" {...field} />
+                <Input placeholder={t.userForm.cityPlaceholder} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -148,11 +159,11 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
 
         <div className="flex justify-end gap-3 pt-4">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            {t.common.cancel}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Spinner className="mr-2" />}
-            {isEditMode ? 'Save changes' : 'Create user'}
+            {isEditMode ? t.common.saveChanges : t.userForm.createUser}
           </Button>
         </div>
       </form>

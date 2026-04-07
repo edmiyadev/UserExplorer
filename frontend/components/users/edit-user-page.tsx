@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 import { UserPageHeader } from '@/components/users/user-page-header'
 import { UserFormCard } from '@/components/users/user-form-card'
 import { useUser } from '@/hooks/use-users'
@@ -21,6 +22,7 @@ interface EditUserPageProps {
 }
 
 export function EditUserPage({ id }: EditUserPageProps) {
+  const { t } = useTranslation()
   const { data: user, isLoading, isError, error, refetch } = useUser(id)
 
   if (isLoading) {
@@ -28,9 +30,8 @@ export function EditUserPage({ id }: EditUserPageProps) {
       <main className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           <UserPageHeader
-            title="Loading..."
+            title={t.common.loading}
             backHref={`/users/${id}`}
-            backLabel="Back to user"
           />
           <Card className="max-w-2xl mx-auto">
             <CardContent className="p-6 space-y-6">
@@ -60,9 +61,8 @@ export function EditUserPage({ id }: EditUserPageProps) {
       <main className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           <UserPageHeader
-            title="Error"
+            title={t.users.failedToLoad}
             backHref={`/users/${id}`}
-            backLabel="Back to user"
           />
           <Card className="max-w-2xl mx-auto">
             <CardContent className="p-0">
@@ -71,18 +71,18 @@ export function EditUserPage({ id }: EditUserPageProps) {
                   <EmptyMedia variant="icon">
                     <AlertCircle className="text-destructive" />
                   </EmptyMedia>
-                  <EmptyTitle>Failed to load user</EmptyTitle>
+                  <EmptyTitle>{t.users.failedToLoad}</EmptyTitle>
                   <EmptyDescription>
-                    {error instanceof Error ? error.message : 'An error occurred'}
+                    {error instanceof Error ? error.message : t.users.failedToLoadDescription}
                   </EmptyDescription>
                 </EmptyHeader>
                 <div className="flex gap-2">
                   <Button onClick={() => refetch()} variant="outline">
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Retry
+                    {t.common.retry}
                   </Button>
                   <Button asChild>
-                    <Link href="/">Back to users</Link>
+                    <Link href="/">{t.nav.backToUsers}</Link>
                   </Button>
                 </div>
               </Empty>
@@ -98,9 +98,8 @@ export function EditUserPage({ id }: EditUserPageProps) {
       <main className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
           <UserPageHeader
-            title="User Not Found"
+            title={t.users.notFound}
             backHref="/"
-            backLabel="Back to users"
           />
           <Card className="max-w-2xl mx-auto">
             <CardContent className="p-0">
@@ -109,13 +108,13 @@ export function EditUserPage({ id }: EditUserPageProps) {
                   <EmptyMedia variant="icon">
                     <UserX />
                   </EmptyMedia>
-                  <EmptyTitle>User not found</EmptyTitle>
+                  <EmptyTitle>{t.users.notFound}</EmptyTitle>
                   <EmptyDescription>
-                    The user you are trying to edit does not exist or has been deleted.
+                    {t.users.notFoundDescription}
                   </EmptyDescription>
                 </EmptyHeader>
                 <Button asChild>
-                  <Link href="/">Back to users</Link>
+                  <Link href="/">{t.nav.backToUsers}</Link>
                 </Button>
               </Empty>
             </CardContent>
@@ -129,10 +128,9 @@ export function EditUserPage({ id }: EditUserPageProps) {
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <UserPageHeader
-          title={`Edit ${user.name}`}
-          description="Update user information"
+          title={t.userDetail.edit(user.name)}
+          description={t.userDetail.editDescription}
           backHref={`/`}
-          backLabel="Back to user"
         />
         <UserFormCard user={user} mode="edit" />
       </div>

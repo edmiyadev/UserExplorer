@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -33,13 +34,14 @@ export function Pagination({
   onPageChange,
   onPageSizeChange,
 }: PaginationProps) {
+  const { t } = useTranslation()
   const startItem = (page - 1) * pageSize + 1
   const endItem = Math.min(page * pageSize, totalCount)
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between px-6 py-4 border-t border-border">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <span>Rows per page:</span>
+        <span>{t.pagination.rowsPerPage}</span>
         <Select
           value={pageSize.toString()}
           onValueChange={(value) => onPageSizeChange(Number(value))}
@@ -59,7 +61,7 @@ export function Pagination({
 
       <div className="flex items-center gap-4">
         <span className="text-sm text-muted-foreground">
-          {totalCount > 0 ? `${startItem}-${endItem} of ${totalCount}` : '0 results'}
+          {totalCount > 0 ? `${startItem}-${endItem} ${t.pagination.of} ${totalCount}` : `0 ${t.pagination.results}`}
         </span>
 
         <div className="flex items-center gap-1">
@@ -71,7 +73,7 @@ export function Pagination({
             disabled={!hasPreviousPage}
           >
             <ChevronsLeft className="h-4 w-4" />
-            <span className="sr-only">First page</span>
+            <span className="sr-only">{t.pagination.firstPage}</span>
           </Button>
           <Button
             variant="outline"
@@ -81,10 +83,10 @@ export function Pagination({
             disabled={!hasPreviousPage}
           >
             <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Previous page</span>
+            <span className="sr-only">{t.pagination.previousPage}</span>
           </Button>
           <span className="text-sm text-muted-foreground min-w-[100px] text-center">
-            Page {page} of {totalPages || 1}
+            {t.pagination.page} {page} {t.pagination.of} {totalPages || 1}
           </span>
           <Button
             variant="outline"
@@ -94,7 +96,7 @@ export function Pagination({
             disabled={!hasNextPage}
           >
             <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Next page</span>
+            <span className="sr-only">{t.pagination.nextPage}</span>
           </Button>
           <Button
             variant="outline"
@@ -104,7 +106,7 @@ export function Pagination({
             disabled={!hasNextPage}
           >
             <ChevronsRight className="h-4 w-4" />
-            <span className="sr-only">Last page</span>
+            <span className="sr-only">{t.pagination.lastPage}</span>
           </Button>
         </div>
       </div>

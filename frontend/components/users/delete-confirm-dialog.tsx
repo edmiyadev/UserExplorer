@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,26 +29,26 @@ export function DeleteConfirmDialog({
   onConfirm,
   isDeleting = false,
 }: DeleteConfirmDialogProps) {
+  const { t } = useTranslation()
+  
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete user?</AlertDialogTitle>
+          <AlertDialogTitle>{t.deleteDialog.title}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete{' '}
-            <span className="font-semibold text-foreground">{user?.name}</span>{' '}
-            from the system.
+            {user && t.deleteDialog.description(user.name)}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>{t.common.cancel}</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             {isDeleting && <Spinner className="mr-2" />}
-            Delete
+            {isDeleting ? t.deleteDialog.deleting : t.common.delete}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

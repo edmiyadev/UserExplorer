@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { User } from '@/lib/types/user'
 import { useUsers, useDeleteUser, useCities, useCompanies } from '@/hooks/use-users'
+import { useTranslation } from '@/lib/i18n'
 import { UserTable } from '@/components/users/user-table'
 import { SearchFilters } from '@/components/users/search-filters'
 import { DeleteConfirmDialog } from '@/components/users/delete-confirm-dialog'
@@ -23,6 +24,7 @@ import { Users, Plus, UserX, AlertCircle, RefreshCw } from 'lucide-react'
 const DEFAULT_PAGE_SIZE = 10
 
 export default function UsersPage() {
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState('')
   const [companyFilter, setCompanyFilter] = useState('')
   const [cityFilter, setCityFilter] = useState('')
@@ -101,16 +103,16 @@ export default function UsersPage() {
               <Users className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">Users</h1>
+              <h1 className="text-2xl font-bold tracking-tight">{t.users.title}</h1>
               <p className="text-sm text-muted-foreground">
-                Manage system users
+                {t.users.description}
               </p>
             </div>
           </div>
           <Button asChild className="w-full sm:w-auto">
             <Link href="/users/new">
               <Plus className="mr-2 h-4 w-4" />
-              New User
+              {t.users.newUser}
             </Link>
           </Button>
         </div>
@@ -120,8 +122,8 @@ export default function UsersPage() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle className="text-base font-medium">
                 {isLoading
-                  ? 'Loading...'
-                  : `${totalCount} user${totalCount !== 1 ? 's' : ''}`}
+                  ? t.common.loading
+                  : t.users.userCount(totalCount)}
               </CardTitle>
             </div>
             <SearchFilters
@@ -162,14 +164,14 @@ export default function UsersPage() {
                   <EmptyMedia variant="icon">
                     <AlertCircle className="text-destructive" />
                   </EmptyMedia>
-                  <EmptyTitle>Failed to load</EmptyTitle>
+                  <EmptyTitle>{t.users.failedToLoad}</EmptyTitle>
                   <EmptyDescription>
-                    {error instanceof Error ? error.message : 'Failed to load users'}
+                    {error instanceof Error ? error.message : t.users.failedToLoadDescription}
                   </EmptyDescription>
                 </EmptyHeader>
                 <Button onClick={() => refetch()} variant="outline">
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Retry
+                  {t.common.retry}
                 </Button>
               </Empty>
             )}
@@ -180,15 +182,15 @@ export default function UsersPage() {
                   <EmptyMedia variant="icon">
                     <UserX />
                   </EmptyMedia>
-                  <EmptyTitle>No users found</EmptyTitle>
+                  <EmptyTitle>{t.users.noUsersFound}</EmptyTitle>
                   <EmptyDescription>
-                    Get started by adding your first user to the system.
+                    {t.users.noUsersFoundDescription}
                   </EmptyDescription>
                 </EmptyHeader>
                 <Button asChild>
                   <Link href="/users/new">
                     <Plus className="mr-2 h-4 w-4" />
-                    Create first user
+                    {t.users.createFirstUser}
                   </Link>
                 </Button>
               </Empty>

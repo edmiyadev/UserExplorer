@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -34,6 +35,7 @@ export function SearchFilters({
   onCityChange,
   onClearFilters,
 }: SearchFiltersProps) {
+  const { t } = useTranslation()
   const hasFilters = searchQuery || companyFilter || cityFilter
 
   return (
@@ -41,7 +43,7 @@ export function SearchFilters({
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search by name or email..."
+          placeholder={t.filters.searchPlaceholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-9"
@@ -50,10 +52,10 @@ export function SearchFilters({
       <div className="flex gap-2">
         <Select value={companyFilter} onValueChange={onCompanyChange}>
           <SelectTrigger className="w-full sm:w-[150px]">
-            <SelectValue placeholder="Company" />
+            <SelectValue placeholder={t.filters.filterByCompany} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">{t.filters.allCompanies}</SelectItem>
             {companies.map((company) => (
               <SelectItem key={company} value={company}>
                 {company}
@@ -63,10 +65,10 @@ export function SearchFilters({
         </Select>
         <Select value={cityFilter} onValueChange={onCityChange}>
           <SelectTrigger className="w-full sm:w-[150px]">
-            <SelectValue placeholder="City" />
+            <SelectValue placeholder={t.filters.filterByCity} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">{t.filters.allCities}</SelectItem>
             {cities.map((city) => (
               <SelectItem key={city} value={city}>
                 {city}
@@ -82,7 +84,7 @@ export function SearchFilters({
             className="shrink-0"
           >
             <X className="h-4 w-4" />
-            <span className="sr-only">Clear filters</span>
+            <span className="sr-only">{t.filters.clearFilters}</span>
           </Button>
         )}
       </div>

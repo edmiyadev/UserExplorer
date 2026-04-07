@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 
@@ -16,15 +17,17 @@ export function UserPageHeader({
   title,
   description,
   backHref = '/',
-  backLabel = 'Back to users',
+  backLabel,
   actions,
 }: UserPageHeaderProps) {
+  const { t } = useTranslation()
+  
   return (
     <div className="mb-8 max-w-2xl mx-auto">
       <Button variant="ghost" size="sm" asChild className="mb-4 -ml-2">
         <Link href={backHref}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          {backLabel}
+          {backLabel || t.nav.backToUsers}
         </Link>
       </Button>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

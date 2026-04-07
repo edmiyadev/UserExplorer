@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tansta
 import { userApi } from '@/lib/api/users';
 import type { CreateUserDto, UserFilters, PaginatedResponse, User } from '@/lib/types/user';
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n';
 
 
 export const userKeys = {
@@ -54,6 +55,7 @@ export function useCompanies() {
 
 export function useCreateUser() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: (userData: CreateUserDto) => userApi.createUser(userData),
@@ -62,10 +64,10 @@ export function useCreateUser() {
       queryClient.invalidateQueries({ queryKey: userKeys.cities() });
       queryClient.invalidateQueries({ queryKey: userKeys.companies() });
       
-      toast.success('User created successfully');
+      toast.success(t.toast.userCreated);
     },
     onError: (error: Error & { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'Failed to create user');
+      toast.error(error.response?.data?.message || t.toast.createError);
     },
   });
 }
@@ -73,6 +75,7 @@ export function useCreateUser() {
 
 export function useUpdateUser() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: CreateUserDto }) => 
@@ -83,10 +86,10 @@ export function useUpdateUser() {
       queryClient.invalidateQueries({ queryKey: userKeys.cities() });
       queryClient.invalidateQueries({ queryKey: userKeys.companies() });
       
-      toast.success('User updated successfully');
+      toast.success(t.toast.userUpdated);
     },
     onError: (error: Error & { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'Failed to update user');
+      toast.error(error.response?.data?.message || t.toast.updateError);
     },
   });
 }
@@ -94,6 +97,7 @@ export function useUpdateUser() {
 
 export function useDeleteUser() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: (id: number) => userApi.deleteUser(id),
@@ -102,10 +106,10 @@ export function useDeleteUser() {
       queryClient.invalidateQueries({ queryKey: userKeys.cities() });
       queryClient.invalidateQueries({ queryKey: userKeys.companies() });
       
-      toast.success('User deleted successfully');
+      toast.success(t.toast.userDeleted);
     },
     onError: (error: Error & { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'Failed to delete user');
+      toast.error(error.response?.data?.message || t.toast.deleteError);
     },
   });
 }

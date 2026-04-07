@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -18,6 +19,7 @@ interface UserDetailCardProps {
 }
 
 export function UserDetailCard({ user }: UserDetailCardProps) {
+  const { t } = useTranslation()
   const router = useRouter()
   const deleteMutation = useDeleteUser()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -52,7 +54,7 @@ export function UserDetailCard({ user }: UserDetailCardProps) {
                 <CardTitle className="text-xl">{user.name}</CardTitle>
                 <CardDescription className="mt-1">
                   <Badge variant="secondary" className="font-mono text-xs">
-                    ID: {user.id}
+                    {t.userDetail.id}: {user.id}
                   </Badge>
                 </CardDescription>
               </div>
@@ -61,7 +63,7 @@ export function UserDetailCard({ user }: UserDetailCardProps) {
               <Button variant="outline" size="sm" asChild>
                 <Link href={`/users/${user.id}/edit`}>
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  {t.common.edit}
                 </Link>
               </Button>
               <Button
@@ -71,7 +73,7 @@ export function UserDetailCard({ user }: UserDetailCardProps) {
                 onClick={() => setDeleteDialogOpen(true)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t.common.delete}
               </Button>
             </div>
           </div>
@@ -82,7 +84,7 @@ export function UserDetailCard({ user }: UserDetailCardProps) {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4" />
-                <span>Email</span>
+                <span>{t.userForm.email}</span>
               </div>
               <p className="font-medium">{user.email}</p>
             </div>
@@ -90,25 +92,25 @@ export function UserDetailCard({ user }: UserDetailCardProps) {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4" />
-                <span>Phone</span>
+                <span>{t.userForm.phone}</span>
               </div>
-              <p className="font-medium">{user.phone || 'Not specified'}</p>
+              <p className="font-medium">{user.phone || t.common.notSpecified}</p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Building2 className="h-4 w-4" />
-                <span>Company</span>
+                <span>{t.userForm.company}</span>
               </div>
-              <p className="font-medium">{user.company || 'Not specified'}</p>
+              <p className="font-medium">{user.company || t.common.notSpecified}</p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4" />
-                <span>City</span>
+                <span>{t.userForm.city}</span>
               </div>
-              <p className="font-medium">{user.city || 'Not specified'}</p>
+              <p className="font-medium">{user.city || t.common.notSpecified}</p>
             </div>
           </div>
         </CardContent>

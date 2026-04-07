@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 import { UserPageHeader } from '@/components/users/user-page-header'
 import { UserDetailCard } from '@/components/users/user-detail-card'
 import { useUser } from '@/hooks/use-users'
@@ -21,13 +22,14 @@ interface UserDetailPageProps {
 }
 
 export function UserDetailPage({ id }: UserDetailPageProps) {
+  const { t } = useTranslation()
   const { data: user, isLoading, isError, error, refetch } = useUser(id)
 
   if (isLoading) {
     return (
       <main className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
-          <UserPageHeader title="Loading..." />
+          <UserPageHeader title={t.common.loading} />
           <Card className="max-w-2xl mx-auto">
             <CardContent className="p-6">
               <div className="flex items-center gap-4 mb-6">
@@ -57,7 +59,7 @@ export function UserDetailPage({ id }: UserDetailPageProps) {
     return (
       <main className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
-          <UserPageHeader title="Error" />
+          <UserPageHeader title={t.users.failedToLoad} />
           <Card className="max-w-2xl mx-auto">
             <CardContent className="p-0">
               <Empty className="py-16 border-0">
@@ -65,18 +67,18 @@ export function UserDetailPage({ id }: UserDetailPageProps) {
                   <EmptyMedia variant="icon">
                     <AlertCircle className="text-destructive" />
                   </EmptyMedia>
-                  <EmptyTitle>Failed to load user</EmptyTitle>
+                  <EmptyTitle>{t.users.failedToLoad}</EmptyTitle>
                   <EmptyDescription>
-                    {error instanceof Error ? error.message : 'An error occurred'}
+                    {error instanceof Error ? error.message : t.users.failedToLoadDescription}
                   </EmptyDescription>
                 </EmptyHeader>
                 <div className="flex gap-2">
                   <Button onClick={() => refetch()} variant="outline">
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Retry
+                    {t.common.retry}
                   </Button>
                   <Button asChild>
-                    <Link href="/">Back to users</Link>
+                    <Link href="/">{t.nav.backToUsers}</Link>
                   </Button>
                 </div>
               </Empty>
@@ -91,7 +93,7 @@ export function UserDetailPage({ id }: UserDetailPageProps) {
     return (
       <main className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
-          <UserPageHeader title="User Not Found" />
+          <UserPageHeader title={t.users.notFound} />
           <Card className="max-w-2xl mx-auto">
             <CardContent className="p-0">
               <Empty className="py-16 border-0">
@@ -99,13 +101,13 @@ export function UserDetailPage({ id }: UserDetailPageProps) {
                   <EmptyMedia variant="icon">
                     <UserX />
                   </EmptyMedia>
-                  <EmptyTitle>User not found</EmptyTitle>
+                  <EmptyTitle>{t.users.notFound}</EmptyTitle>
                   <EmptyDescription>
-                    The user you are looking for does not exist or has been deleted.
+                    {t.users.notFoundDescription}
                   </EmptyDescription>
                 </EmptyHeader>
                 <Button asChild>
-                  <Link href="/">Back to users</Link>
+                  <Link href="/">{t.nav.backToUsers}</Link>
                 </Button>
               </Empty>
             </CardContent>
@@ -119,8 +121,8 @@ export function UserDetailPage({ id }: UserDetailPageProps) {
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <UserPageHeader
-          title="User Details"
-          description={`Viewing profile for ${user.name}`}
+          title={t.userDetail.title}
+          description={t.userDetail.description(user.name)}
         />
         <UserDetailCard user={user} />
       </div>

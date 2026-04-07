@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/lib/i18n'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { UserForm } from '@/components/users/user-form'
 import { useCreateUser, useUpdateUser } from '@/hooks/use-users'
@@ -12,6 +13,7 @@ interface UserFormCardProps {
 }
 
 export function UserFormCard({ user, mode }: UserFormCardProps) {
+  const { t } = useTranslation()
   const router = useRouter()
   const createMutation = useCreateUser()
   const updateMutation = useUpdateUser()
@@ -39,11 +41,11 @@ export function UserFormCard({ user, mode }: UserFormCardProps) {
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>{mode === 'create' ? 'User Information' : 'Edit Information'}</CardTitle>
+        <CardTitle>{mode === 'create' ? t.userForm.createTitle : t.userForm.editTitle}</CardTitle>
         <CardDescription>
           {mode === 'create'
-            ? 'Fill in the details below to create a new user account.'
-            : 'Update the user information below.'}
+            ? t.userForm.createDescription
+            : t.userForm.editDescription}
         </CardDescription>
       </CardHeader>
       <CardContent>

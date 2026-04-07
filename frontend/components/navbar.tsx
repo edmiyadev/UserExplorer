@@ -1,6 +1,7 @@
 "use client"
 
 import { ModeToggle } from "@/components/mode-toggle"
+import { LanguageToggle } from "@/components/language-toggle"
 
 export function Navbar() {
   return (
@@ -11,6 +12,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           <ModeToggle />
         </div>
       </div>
