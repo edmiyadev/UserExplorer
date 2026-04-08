@@ -2,22 +2,14 @@
 
 import { useTranslation } from '@/lib/i18n'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { Search, X } from 'lucide-react'
+import { Search, X, Building2, MapPin } from 'lucide-react'
+import { AutocompleteFilter } from './autocomplete-filter'
 
 interface SearchFiltersProps {
   searchQuery: string
   companyFilter: string
   cityFilter: string
-  companies: string[]
-  cities: string[]
   onSearchChange: (value: string) => void
   onCompanyChange: (value: string) => void
   onCityChange: (value: string) => void
@@ -28,8 +20,6 @@ export function SearchFilters({
   searchQuery,
   companyFilter,
   cityFilter,
-  companies,
-  cities,
   onSearchChange,
   onCompanyChange,
   onCityChange,
@@ -49,33 +39,21 @@ export function SearchFilters({
           className="pl-9"
         />
       </div>
-      <div className="flex gap-2">
-        <Select value={companyFilter} onValueChange={onCompanyChange}>
-          <SelectTrigger className="w-full sm:w-[150px]">
-            <SelectValue placeholder={t.filters.filterByCompany} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t.filters.allCompanies}</SelectItem>
-            {companies.map((company) => (
-              <SelectItem key={company} value={company}>
-                {company}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={cityFilter} onValueChange={onCityChange}>
-          <SelectTrigger className="w-full sm:w-[150px]">
-            <SelectValue placeholder={t.filters.filterByCity} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t.filters.allCities}</SelectItem>
-            {cities.map((city) => (
-              <SelectItem key={city} value={city}>
-                {city}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <AutocompleteFilter
+          value={companyFilter}
+          onChange={onCompanyChange}
+          placeholder={t.filters.filterByCompany}
+          filterType="company"
+          icon={<Building2 className="h-4 w-4" />}
+        />
+        <AutocompleteFilter
+          value={cityFilter}
+          onChange={onCityChange}
+          placeholder={t.filters.filterByCity}
+          filterType="city"
+          icon={<MapPin className="h-4 w-4" />}
+        />
         {hasFilters && (
           <Button
             variant="ghost"

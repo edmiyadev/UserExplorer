@@ -47,18 +47,4 @@ export const userApi = {
   deleteUser: async (id: number): Promise<void> => {
     await apiClient.delete(`/api/users/${id}`);
   },
-
-  // Get unique cities for filter (fetch all users to extract cities)
-  getUniqueCities: async (): Promise<string[]> => {
-    const { data } = await apiClient.get<PaginatedResponse<User>>('/api/users?pageSize=10');
-    const cities = [...new Set(data.data.map(user => user.city).filter(Boolean))];
-    return cities.sort();
-  },
-
-  // Get unique companies for filter (fetch all users to extract companies)
-  getUniqueCompanies: async (): Promise<string[]> => {
-    const { data } = await apiClient.get<PaginatedResponse<User>>('/api/users?pageSize=10');
-    const companies = [...new Set(data.data.map(user => user.company).filter(Boolean))];
-    return companies.sort();
-  },
 };

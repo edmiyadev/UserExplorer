@@ -11,8 +11,6 @@ export const userKeys = {
   list: (filters?: UserFilters) => [...userKeys.lists(), filters] as const,
   details: () => [...userKeys.all, 'detail'] as const,
   detail: (id: number) => [...userKeys.details(), id] as const,
-  cities: () => ['cities'] as const,
-  companies: () => ['companies'] as const,
 };
 
 
@@ -35,24 +33,6 @@ export function useUser(id: number) {
 }
 
 
-export function useCities() {
-  return useQuery({
-    queryKey: userKeys.cities(),
-    queryFn: () => userApi.getUniqueCities(),
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-}
-
-
-export function useCompanies() {
-  return useQuery({
-    queryKey: userKeys.companies(),
-    queryFn: () => userApi.getUniqueCompanies(),
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-}
-
-
 export function useCreateUser() {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
@@ -61,8 +41,6 @@ export function useCreateUser() {
     mutationFn: (userData: CreateUserDto) => userApi.createUser(userData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: userKeys.cities() });
-      queryClient.invalidateQueries({ queryKey: userKeys.companies() });
       
       toast.success(t.toast.userCreated);
     },
@@ -83,8 +61,6 @@ export function useUpdateUser() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       queryClient.invalidateQueries({ queryKey: userKeys.details() });
-      queryClient.invalidateQueries({ queryKey: userKeys.cities() });
-      queryClient.invalidateQueries({ queryKey: userKeys.companies() });
       
       toast.success(t.toast.userUpdated);
     },
@@ -103,8 +79,6 @@ export function useDeleteUser() {
     mutationFn: (id: number) => userApi.deleteUser(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: userKeys.cities() });
-      queryClient.invalidateQueries({ queryKey: userKeys.companies() });
       
       toast.success(t.toast.userDeleted);
     },

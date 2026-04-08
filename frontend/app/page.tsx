@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { User } from '@/lib/types/user'
-import { useUsers, useDeleteUser, useCities, useCompanies } from '@/hooks/use-users'
+import { useUsers, useDeleteUser } from '@/hooks/use-users'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslation } from '@/lib/i18n'
 import { UserTable } from '@/components/users/user-table'
@@ -35,6 +35,8 @@ export default function UsersPage() {
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
 
   const debouncedSearch = useDebounce(searchQuery, 400)
+  const debouncedCompany = useDebounce(companyFilter, 400)
+  const debouncedCity = useDebounce(cityFilter, 400)
 
   const { 
     data, 
@@ -44,8 +46,8 @@ export default function UsersPage() {
     refetch 
   } = useUsers({
     search: debouncedSearch || undefined,
-    company: companyFilter && companyFilter !== 'all' ? companyFilter : undefined,
-    city: cityFilter && cityFilter !== 'all' ? cityFilter : undefined,
+    company: debouncedCompany && debouncedCompany.length >= 2 ? debouncedCompany : undefined,
+    city: debouncedCity && debouncedCity.length >= 2 ? debouncedCity : undefined,
     page,
     pageSize,
   })
@@ -53,8 +55,6 @@ export default function UsersPage() {
   const users = data?.data ?? []
   const totalCount = data?.totalCount ?? 0
   
-  const { data: cities = [] } = useCities()
-  const { data: companies = [] } = useCompanies()
   const deleteUserMutation = useDeleteUser()
 
   const handleOpenDelete = (user: User) => {
@@ -126,8 +126,6 @@ export default function UsersPage() {
               searchQuery={searchQuery}
               companyFilter={companyFilter}
               cityFilter={cityFilter}
-              companies={companies}
-              cities={cities}
               onSearchChange={handleSearchChange}
               onCompanyChange={handleCompanyChange}
               onCityChange={handleCityChange}

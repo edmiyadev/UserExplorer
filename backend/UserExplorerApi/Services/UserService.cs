@@ -32,12 +32,12 @@ public class UserService : IUserService
 
         if (!string.IsNullOrWhiteSpace(queryParams.City))
         {
-            query = query.Where(u => u.City.ToLower().Trim() == cityLowered);
+            query = query.Where(u => u.City.ToLower().Trim().Contains(cityLowered!));
         }
 
         if (!string.IsNullOrWhiteSpace(queryParams.Company))
         {
-            query = query.Where(u => u.Company.ToLower().Trim() == companyLowered);
+            query = query.Where(u => u.Company.ToLower().Trim().Contains(companyLowered!));
         }
 
         var totalCount = await query.CountAsync();
