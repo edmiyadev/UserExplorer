@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { userApi } from '@/lib/api/users';
+import { ApiError } from '@/lib/api/api-client';
 import type { CreateUserDto, UserFilters, PaginatedResponse, User } from '@/lib/types/user';
 import { toast } from 'sonner';
 import { useTranslation } from '@/lib/i18n';
@@ -44,8 +45,8 @@ export function useCreateUser() {
       
       toast.success(t.toast.userCreated);
     },
-    onError: (error: Error & { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || t.toast.createError);
+    onError: (error: ApiError) => {
+      toast.error(error.message || t.toast.createError);
     },
   });
 }
@@ -64,8 +65,8 @@ export function useUpdateUser() {
       
       toast.success(t.toast.userUpdated);
     },
-    onError: (error: Error & { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || t.toast.updateError);
+    onError: (error: ApiError) => {
+      toast.error(error.message || t.toast.updateError);
     },
   });
 }
@@ -82,8 +83,8 @@ export function useDeleteUser() {
       
       toast.success(t.toast.userDeleted);
     },
-    onError: (error: Error & { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || t.toast.deleteError);
+    onError: (error: ApiError) => {
+      toast.error(error.message || t.toast.deleteError);
     },
   });
 }

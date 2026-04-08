@@ -1,14 +1,5 @@
-import axios from 'axios';
+import { apiClient } from '@/lib/api/api-client';
 import type { User, CreateUserDto, UserFilters, PaginatedResponse } from '@/lib/types/user';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5059';
-
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
 
 export const userApi = {
   // Get all users with optional filters and pagination
