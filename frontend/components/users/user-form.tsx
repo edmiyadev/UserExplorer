@@ -18,34 +18,48 @@ import {
 import { Spinner } from '@/components/ui/spinner'
 import { User, CreateUserDto } from '@/lib/types/user'
 
-const userFormSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().min(1).email(),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  city: z.string().optional(),
-})
+type UserFormValues = z.infer<ReturnType<typeof createUserFormSchema>>
 
-type UserFormValues = z.infer<typeof userFormSchema>
+function createUserFormSchema(t: { validation: Record<string, string | ((n: number) => string)> }) {
+  return z.object({
+    name: z
+      .string()
+      .min(1, t.validation.nameRequired as string)
+      .max(100, (t.validation.nameMaxLength as (n: number) => string)(100)),
+    email: z
+      .email(t.validation.emailInvalid as string)
+      .max(150, (t.validation.emailMaxLength as (n: number) => string)(150)),
+    phone: z
+      .string()
+      .max(20, (t.validation.phoneMaxLength as (n: number) => string)(20))
+      .optional()
+      .or(z.literal('')),
+    company: z
+      .string()
+      .max(100, (t.validation.companyMaxLength as (n: number) => string)(100))
+      .optional()
+      .or(z.literal('')),
+    city: z
+      .string()
+      .max(100, (t.validation.cityMaxLength as (n: number) => string)(100))
+      .optional()
+      .or(z.literal('')),
+  })
+}
 
 interface UserFormProps {
   user?: User | null
   onSubmit: (data: CreateUserDto) => Promise<void>
   onCancel: () => void
   isSubmitting?: boolean
+  serverError?: string | null
 }
 
-export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: UserFormProps) {
+export function UserForm({ user, onSubmit, onCancel, isSubmitting = false, serverError }: UserFormProps) {
   const { t } = useTranslation()
-  
-  const userFormSchema = z.object({
-    name: z.string().min(1, t.validation.nameRequired),
-    email: z.email(t.validation.emailInvalid),
-    phone: z.string().optional(),
-    company: z.string().optional(),
-    city: z.string().optional(),
-  })
-  
+
+  const userFormSchema = createUserFormSchema(t)
+
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -78,6 +92,13 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
     }
   }, [user, form])
 
+  // Show server-side email error (e.g. duplicate) on the email field
+  useEffect(() => {
+    if (serverError) {
+      form.setError('email', { type: 'server', message: serverError })
+    }
+  }, [serverError, form])
+
   const handleSubmit = async (values: UserFormValues) => {
     await onSubmit(values)
   }
@@ -94,7 +115,7 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
             <FormItem>
               <FormLabel>{t.userForm.name}</FormLabel>
               <FormControl>
-                <Input placeholder={t.userForm.namePlaceholder} {...field} />
+                <Input placeholder={t.userForm.namePlaceholder} maxLength={100} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -108,7 +129,7 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
             <FormItem>
               <FormLabel>{t.userForm.email}</FormLabel>
               <FormControl>
-                <Input type="email" placeholder={t.userForm.emailPlaceholder} {...field} />
+                <Input type="email" placeholder={t.userForm.emailPlaceholder} maxLength={150} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,7 +143,7 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
             <FormItem>
               <FormLabel>{t.userForm.phone}</FormLabel>
               <FormControl>
-                <Input placeholder={t.userForm.phonePlaceholder} {...field} />
+                <Input placeholder={t.userForm.phonePlaceholder} maxLength={20} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -136,7 +157,7 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
             <FormItem>
               <FormLabel>{t.userForm.company}</FormLabel>
               <FormControl>
-                <Input placeholder={t.userForm.companyPlaceholder} {...field} />
+                <Input placeholder={t.userForm.companyPlaceholder} maxLength={100} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -146,11 +167,11 @@ export function UserForm({ user, onSubmit, onCancel, isSubmitting = false }: Use
         <FormField
           control={form.control}
           name="city"
-          render={({ field}) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>{t.userForm.city}</FormLabel>
               <FormControl>
-                <Input placeholder={t.userForm.cityPlaceholder} {...field} />
+                <Input placeholder={t.userForm.cityPlaceholder} maxLength={100} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

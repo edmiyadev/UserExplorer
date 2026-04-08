@@ -119,8 +119,14 @@ export const es = {
   // Validation
   validation: {
     nameRequired: 'El nombre es requerido',
+    nameMaxLength: (n: number) => `El nombre no debe exceder ${n} caracteres`,
     emailRequired: 'El correo electrónico es requerido',
     emailInvalid: 'Formato de correo electrónico inválido',
+    emailMaxLength: (n: number) => `El correo no debe exceder ${n} caracteres`,
+    emailDuplicate: 'Este correo electrónico ya está registrado',
+    phoneMaxLength: (n: number) => `El teléfono no debe exceder ${n} caracteres`,
+    companyMaxLength: (n: number) => `La empresa no debe exceder ${n} caracteres`,
+    cityMaxLength: (n: number) => `La ciudad no debe exceder ${n} caracteres`,
   },
 
   // Empty States

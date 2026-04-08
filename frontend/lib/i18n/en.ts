@@ -119,8 +119,14 @@ export const en = {
   // Validation
   validation: {
     nameRequired: 'Name is required',
+    nameMaxLength: (n: number) => `Name must not exceed ${n} characters`,
     emailRequired: 'Email is required',
     emailInvalid: 'Invalid email format',
+    emailMaxLength: (n: number) => `Email must not exceed ${n} characters`,
+    emailDuplicate: 'This email is already registered',
+    phoneMaxLength: (n: number) => `Phone must not exceed ${n} characters`,
+    companyMaxLength: (n: number) => `Company must not exceed ${n} characters`,
+    cityMaxLength: (n: number) => `City must not exceed ${n} characters`,
   },
 
   // Empty States
