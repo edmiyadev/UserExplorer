@@ -46,6 +46,10 @@ COPY . .
 
 ENV NODE_ENV=production
 
+# Build-time argument for API URL (Next.js bakes NEXT_PUBLIC_* at build time)
+ARG NEXT_PUBLIC_API_URL=http://localhost:5000
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.

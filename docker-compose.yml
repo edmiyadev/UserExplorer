@@ -4,6 +4,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:5000
     image: nextjs-standalone-image
     container_name: nextjs-standalone-container
     environment:
@@ -12,8 +14,24 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
+    depends_on:
+      - backend
   
 
+  backend:
+    image: ${DOCKER_REGISTRY-}userexplorerapi
+    build:
+      context: ./backend
+      dockerfile: UserExplorerApi/Dockerfile
+    container_name: userexplorerapi
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Host=pgsql;Database=userexplorer;Username=postgres;Password=password
+    depends_on:
+      - pgsql
 
   pgsql:
     image: postgres:16

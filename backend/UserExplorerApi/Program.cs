@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UserExplorerApi.Data;
+using UserExplorerApi.Extensions;
 using UserExplorerApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,9 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+
+// Apply migrations on startup not recommended for production, but fine for development and testing
+app.ApplyMigrations();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
