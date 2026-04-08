@@ -10,6 +10,9 @@ public class UserProfile : Profile
     {
         CreateMap<User, UserResponseDto>().ReverseMap();
         CreateMap<User, CreateUserDto>().ReverseMap();
-        CreateMap<UpdateUserDto, User>();
+        CreateMap<UpdateUserDto, User>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
     }
 }
