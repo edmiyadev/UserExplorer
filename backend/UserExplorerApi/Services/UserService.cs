@@ -43,6 +43,7 @@ public class UserService : IUserService
         var totalCount = await query.CountAsync();
 
         var users = await query
+            .AsNoTracking()
             .OrderBy(u => u.Id)
             .Skip((queryParams.Page - 1) * queryParams.PageSize)
             .Take(queryParams.PageSize)
@@ -101,5 +102,10 @@ public class UserService : IUserService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<int> GetUserCountAsync()
+    {
+        return await _context.Users.CountAsync();
     }
 }

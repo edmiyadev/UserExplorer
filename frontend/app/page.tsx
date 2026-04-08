@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { User } from '@/lib/types/user'
 import { useUsers, useDeleteUser, useCities, useCompanies } from '@/hooks/use-users'
+import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslation } from '@/lib/i18n'
 import { UserTable } from '@/components/users/user-table'
 import { SearchFilters } from '@/components/users/search-filters'
@@ -33,6 +34,8 @@ export default function UsersPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [userToDelete, setUserToDelete] = useState<User | null>(null)
 
+  const debouncedSearch = useDebounce(searchQuery, 400)
+
   const { 
     data, 
     isLoading, 
@@ -40,7 +43,7 @@ export default function UsersPage() {
     error,
     refetch 
   } = useUsers({
-    search: searchQuery || undefined,
+    search: debouncedSearch || undefined,
     company: companyFilter && companyFilter !== 'all' ? companyFilter : undefined,
     city: cityFilter && cityFilter !== 'all' ? cityFilter : undefined,
     page,
@@ -119,13 +122,6 @@ export default function UsersPage() {
 
         <Card className="border-border">
           <CardHeader className="border-b border-border pb-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <CardTitle className="text-base font-medium">
-                {isLoading
-                  ? t.common.loading
-                  : t.users.userCount(totalCount)}
-              </CardTitle>
-            </div>
             <SearchFilters
               searchQuery={searchQuery}
               companyFilter={companyFilter}
