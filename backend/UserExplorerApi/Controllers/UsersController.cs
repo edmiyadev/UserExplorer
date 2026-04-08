@@ -41,6 +41,9 @@ public class UsersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
+        if (await _userService.IsEmailDuplicateAsync(createUserDto.Email))
+            return Conflict(new { message = "Email already in use" });
+
         try
         {
             var user = await _userService.CreateUserAsync(createUserDto);
@@ -57,6 +60,9 @@ public class UsersController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        if (await _userService.IsEmailDuplicateAsync(updateUserDto.Email, id))
+            return Conflict(new { message = "Email already in use" });
 
         try
         {

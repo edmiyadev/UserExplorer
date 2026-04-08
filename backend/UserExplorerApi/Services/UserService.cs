@@ -108,4 +108,14 @@ public class UserService : IUserService
     {
         return await _context.Users.CountAsync();
     }
+
+    public async Task<bool> IsEmailDuplicateAsync(string email, int? excludeUserId = null)
+    {
+        var query = _context.Users.Where(u => u.Email.ToLower().Trim() == email.ToLower().Trim());
+        if (excludeUserId.HasValue)
+        {
+            query = query.Where(u => u.Id != excludeUserId.Value);
+        }
+        return await query.AnyAsync();
+    }
 }

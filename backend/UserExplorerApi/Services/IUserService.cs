@@ -9,4 +9,5 @@ public interface IUserService
     Task<UserResponseDto> CreateUserAsync(CreateUserDto createUserDto);
     Task<UserResponseDto?> UpdateUserAsync(int id, UpdateUserDto updateUserDto);
     Task<bool> DeleteUserAsync(int id);
+    Task<bool> IsEmailDuplicateAsync(string email, int? excludeUserId = null);
 }
